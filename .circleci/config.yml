@@ -47,9 +47,11 @@ workflows:
   workflow:
     jobs:
       - build:
-          requires:
+          context: General
+
 
       - deploy:
+          context: General
           requires:
             - build
 

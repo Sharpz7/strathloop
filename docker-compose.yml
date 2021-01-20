@@ -14,10 +14,10 @@ services:
     hostname: mysql
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: ${PASS}
+      MYSQL_ROOT_PASSWORD: ${STRATHPASS}
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
-      MYSQL_PASSWORD: ${PASS}
+      MYSQL_PASSWORD: ${STRATHPASS}
 
     volumes:
       - strathloop_mysql:/var/lib/mysql
@@ -30,7 +30,7 @@ services:
     environment:
        WORDPRESS_DB_HOST: mysql:3306
        WORDPRESS_DB_USER: wordpress
-       WORDPRESS_DB_PASSWORD: ${PASS}
+       WORDPRESS_DB_PASSWORD: ${STRATHPASS}
 
     depends_on:
       - mysql

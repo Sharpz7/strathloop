@@ -1,0 +1,68 @@
+name: ci
+
+on:
+  push:
+    branches: master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          registry: docker.mcaq.me
+          username: ${{ secrets.DOCKERUSER }}
+          password: ${{ secrets.DOCKERPASS }}
+      -
+        name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: docker.mcaq.me/ewan
+          cache-from: type=registry,ref=docker.mcaq.me/ewan
+          cache-to: type=inline
+          context: .
+          file: ./Dockerfile
+
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+      - name: Build SharpCD
+        run: |
+          cd $GITHUB_WORKSPACE
+          wget https://github.com/Sharpz7/sharpcd/releases/download/0.1.3/linux.tar.gz
+          sudo tar -C /usr/local/bin/ -zxvf linux.tar.gz
+          rm -r linux.tar.gz
+
+          cp /usr/local/bin/sharpcd ./sharpcd
+
+
+      - name: Run SharpCD
+        env:
+          SHARPCD_SECRET: ${{ secrets.SHARPCDSECRET }}
+          username: ${{ secrets.DOCKERUSER }}
+          password: ${{ secrets.DOCKERPASS }}
+        run: |
+          cd $GITHUB_WORKSPACE
+
+          echo "DOCKER_USER=${username}" > .env
+          echo "DOCKER_PASS=${password}" >> .env
+          cat .env
+          chmod +x sharpcd
+          sharpcd --secret ${SHARPCD_SECRET}

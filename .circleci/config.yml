@@ -1,0 +1,58 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: docker:stable
+
+    steps:
+      - checkout
+
+      - run:
+          name: "Build"
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker pull sharp6292/strathloop:latest || true
+            docker build --cache-from sharp6292/strathloop:latest -t sharp6292/strathloop:latest .
+            docker push sharp6292/strathloop:latest
+
+  deploy:
+    docker:
+      - image: cimg/base:2020.01
+
+    steps:
+      - checkout
+
+      - run:
+          name: "Install SharpCD"
+          command: |
+            wget https://github.com/Sharpz7/sharpcd/releases/download/0.1.0/linux.tar.gz
+            sudo tar -C /usr/local/bin/ -zxvf linux.tar.gz
+            rm -r linux.tar.gz
+
+            chmod u+x /usr/local/bin/sharpcd
+
+      - run:
+          name: "Setup Env"
+          command: |
+            echo "PASS=${PASS}" > .env
+
+      - run:
+          name: "SharpCD Deploy"
+          command: |
+            sharpcd --secret ${SHARPCD_SECRET}
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build:
+          requires:
+
+      - deploy:
+          requires:
+            - build
+
+          filters:
+            branches:
+              only: master

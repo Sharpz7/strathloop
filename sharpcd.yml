@@ -1,0 +1,9 @@
+version: 1
+
+tasks:
+  strathloop_task:
+    name: Strathloop Website
+    type: docker
+    sharpurl: https://62.171.151.39:5666
+    giturl: https://raw.githubusercontent.com/Sharpz7/
+    compose: /strathloop/main/docker-compose.yml

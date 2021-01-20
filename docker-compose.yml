@@ -1,0 +1,53 @@
+version: "3"
+
+services:
+  strathloop:
+    hostname: strathloop
+    image: sharp6292/strathloop
+
+  volumes:
+    - strathloop_data:/var/www/html
+
+  restart: always
+
+  mysql:
+    hostname: mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PASS}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: ${PASS}
+
+    volumes:
+      - strathloop_mysql:/var/lib/mysql
+
+    restart: always
+
+  wordpress:
+    hostname: wordpress
+    image: wordpress:5.1.1-fpm-alpine
+    environment:
+       WORDPRESS_DB_HOST: mysql:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: ${PASS}
+
+    depends_on:
+      - mysql
+
+    volumes:
+      - strathloop_data:/var/www/html
+
+    restart: always
+
+
+volumes:
+  strathloop_mysql:
+    external: True
+  strathloop_data:
+    external: true
+
+networks:
+    default:
+        external:
+            name: sharpnet

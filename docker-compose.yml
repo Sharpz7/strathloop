@@ -5,6 +5,10 @@ services:
     hostname: strathloop
     image: sharp6292/strathloop
 
+    depends_on:
+      - mysql
+      - wordpress
+
     volumes:
       - strathloop_data:/var/www/html
 

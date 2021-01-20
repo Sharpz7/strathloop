@@ -37,7 +37,7 @@ jobs:
       - run:
           name: "Setup Env"
           command: |
-            echo "PASS=${PASS}" > .env
+            echo "STRATHPASS=${STRATHPASS}" > .env
 
       - run:
           name: "SharpCD Deploy"

@@ -5,10 +5,10 @@ services:
     hostname: strathloop
     image: sharp6292/strathloop
 
-  volumes:
-    - strathloop_data:/var/www/html
+    volumes:
+      - strathloop_data:/var/www/html
 
-  restart: always
+    restart: always
 
   mysql:
     hostname: mysql

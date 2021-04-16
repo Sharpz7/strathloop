@@ -30,7 +30,7 @@ services:
 
   wordpress:
     hostname: wordpress
-    image: wordpress:5-php7.4-fpm-alpine
+    image: wordpress:fpm-alpine
     environment:
        WORDPRESS_DB_HOST: mysql:3306
        WORDPRESS_DB_USER: wordpress
